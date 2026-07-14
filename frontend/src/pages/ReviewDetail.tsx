@@ -1,8 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Loader2, ArrowLeft, CheckCircle2, AlertCircle, Lock, Send, Sparkles } from 'lucide-react';
+import { Loader2, ArrowLeft, CheckCircle2, AlertCircle, Lock, Send, Sparkles, FileText, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../services/api';
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import 'react-pdf/dist/esm/Page/TextLayer.css';
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 const ReviewDetail = () => {
   const { id } = useParams();
@@ -12,6 +17,22 @@ const ReviewDetail = () => {
   const [isChatting, setIsChatting] = useState(false);
   const [pdfDataUri, setPdfDataUri] = useState<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const pdfContainerRef = useRef<HTMLDivElement>(null);
+  const [pdfWidth, setPdfWidth] = useState<number>(0);
+  const [numPages, setNumPages] = useState<number>();
+  const [pageNumber, setPageNumber] = useState<number>(1);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (pdfContainerRef.current) {
+        // Leave a little margin (40px)
+        setPdfWidth(pdfContainerRef.current.clientWidth - 40);
+      }
+    };
+    setTimeout(updateWidth, 100);
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, [pdfDataUri]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -105,7 +126,7 @@ const ReviewDetail = () => {
     <div className="h-[calc(100vh-4rem)] flex flex-col lg:flex-row overflow-hidden bg-[#FAFAFA]">
       
       {/* LEFT PANEL: Analysis & Chat */}
-      <div className="w-full lg:w-1/2 h-1/2 lg:h-full flex flex-col border-b lg:border-b-0 lg:border-r border-neutral-200 bg-white shadow-sm overflow-hidden z-10">
+      <div className="w-full lg:w-1/2 h-[65%] lg:h-full flex flex-col border-b lg:border-b-0 lg:border-r border-neutral-200 bg-white shadow-[0_4px_20px_-10px_rgba(0,0,0,0.1)] lg:shadow-sm overflow-hidden z-10 relative">
         
         {/* Header */}
         <div className="px-8 py-6 border-b border-neutral-100 shrink-0">
@@ -113,11 +134,11 @@ const ReviewDetail = () => {
             <ArrowLeft className="h-4 w-4" /> Back to History
           </Link>
           <h1 className="text-2xl font-bold text-black mb-1 truncate">{review.job_title}</h1>
-          <p className="text-sm text-neutral-500">Analysis complete. Chat with AI to optimize.</p>
+          <p className="text-sm text-neutral-500">Analysis complete. <span className="font-semibold text-black">Scroll down</span> to view details or chat with AI.</p>
         </div>
 
         {/* Scrollable Analysis Content */}
-        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-8 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-8 custom-scrollbar relative shadow-[inset_0_-15px_15px_-15px_rgba(0,0,0,0.05)]">
           
           {/* Scores */}
           <div className="flex gap-4">
@@ -299,11 +320,57 @@ const ReviewDetail = () => {
             <p className="text-sm font-medium text-neutral-500">Compiling ATS-optimized PDF...</p>
           </div>
         ) : (
-          <iframe 
-            src={`${pdfDataUri}#toolbar=0&navpanes=0&scrollbar=0`}
-            className="w-full h-full border-none"
-            title="Resume PDF Preview"
-          />
+          <div ref={pdfContainerRef} className="flex-1 overflow-y-auto w-full flex flex-col items-center p-5 custom-scrollbar">
+            <Document 
+              file={pdfDataUri} 
+              onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+              loading={
+                <div className="flex flex-col items-center justify-center p-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-neutral-400 mb-4" />
+                  <p className="text-sm font-medium text-neutral-500">Rendering PDF...</p>
+                </div>
+              }
+              className="drop-shadow-lg"
+            >
+              <Page 
+                pageNumber={pageNumber} 
+                width={pdfWidth > 0 ? pdfWidth : undefined}
+                renderTextLayer={true}
+                renderAnnotationLayer={true}
+                className="bg-white"
+              />
+            </Document>
+            
+            {/* Pagination Controls */}
+            {numPages && numPages > 1 && (
+              <div className="flex items-center gap-4 mt-6 mb-4 bg-white px-4 py-2 rounded-full shadow-sm border border-neutral-200">
+                <button 
+                  onClick={() => setPageNumber(p => Math.max(1, p - 1))}
+                  disabled={pageNumber <= 1}
+                  className="p-1 rounded-full hover:bg-neutral-100 disabled:opacity-50"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <span className="text-xs font-semibold">Page {pageNumber} of {numPages}</span>
+                <button 
+                  onClick={() => setPageNumber(p => Math.min(numPages, p + 1))}
+                  disabled={pageNumber >= numPages}
+                  className="p-1 rounded-full hover:bg-neutral-100 disabled:opacity-50"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+            
+            {/* Mobile Download Fallback */}
+            <a 
+              href={pdfDataUri}
+              download="ResumeX_Optimized.pdf"
+              className="lg:hidden mt-6 bg-black text-white px-6 py-3 rounded-full text-sm font-semibold flex items-center gap-2 shadow-lg hover:bg-neutral-800"
+            >
+              <Download className="h-4 w-4" /> Download PDF File
+            </a>
+          </div>
         )}
       </div>
 
