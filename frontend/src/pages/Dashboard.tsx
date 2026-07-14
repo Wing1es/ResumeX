@@ -156,6 +156,27 @@ const Dashboard = () => {
             </div>
           </div>
 
+          {/* Mobile free tier display */}
+          {status && !isPro && (
+            <div className="lg:hidden mb-6 p-4 bg-neutral-100 rounded-xl border border-neutral-200">
+              <div className="flex justify-between text-xs mb-2">
+                <span className="text-neutral-500 font-medium">Free Analyses Used</span>
+                <span className="text-black font-bold">{status.usage_count}/{status.max_free_uses}</span>
+              </div>
+              <div className="h-1.5 bg-neutral-200 rounded-full overflow-hidden mb-3">
+                <div
+                  className="h-full bg-black rounded-full transition-all"
+                  style={{ width: `${Math.min(((status?.usage_count || 0) / (status?.max_free_uses || 1)) * 100, 100)}%` }}
+                />
+              </div>
+              {reachedLimit && (
+                <Link to="/billing" className="block text-center text-xs font-semibold text-white bg-black py-2 rounded-lg hover:bg-neutral-800 transition-colors">
+                  Upgrade to Pro
+                </Link>
+              )}
+            </div>
+          )}
+
           {analyzeMutation.isError && (
             <div className="mb-5 p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm flex gap-2.5">
               <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
