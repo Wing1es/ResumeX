@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Loader2, ArrowLeft, CheckCircle2, AlertCircle, Lock, Send, Sparkles, FileText, Download, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Loader2, ArrowLeft, CheckCircle2, AlertCircle, Lock, Send, Sparkles, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../services/api';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
