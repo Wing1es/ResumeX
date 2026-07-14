@@ -334,7 +334,7 @@ const ReviewDetail = () => {
             >
               {/* Desktop: Continuous Scroll */}
               <div className="hidden lg:flex flex-col gap-6 w-full items-center">
-                {Array.from(new Array(numPages || 1), (el, index) => (
+                {Array.from(new Array(numPages || 1), (_, index) => (
                   <Page 
                     key={`page_desktop_${index + 1}`}
                     pageNumber={index + 1} 
