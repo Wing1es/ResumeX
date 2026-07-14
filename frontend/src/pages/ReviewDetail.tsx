@@ -123,10 +123,10 @@ const ReviewDetail = () => {
   const sectionAnnotations = feedback.section_annotations || [];
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col lg:flex-row overflow-hidden bg-[#FAFAFA]">
+    <div className="min-h-[calc(100vh-4rem)] lg:h-[calc(100vh-4rem)] flex flex-col lg:flex-row lg:overflow-hidden bg-[#FAFAFA]">
       
       {/* LEFT PANEL: Analysis & Chat */}
-      <div className="w-full lg:w-1/2 h-[65%] lg:h-full flex flex-col border-b lg:border-b-0 lg:border-r border-neutral-200 bg-white shadow-[0_4px_20px_-10px_rgba(0,0,0,0.1)] lg:shadow-sm overflow-hidden z-10 relative">
+      <div className="w-full lg:w-1/2 h-[75vh] lg:h-full flex flex-col border-b lg:border-b-0 lg:border-r border-neutral-200 bg-white shadow-[0_4px_20px_-10px_rgba(0,0,0,0.1)] lg:shadow-sm overflow-hidden z-10 relative shrink-0">
         
         {/* Header */}
         <div className="px-8 py-6 border-b border-neutral-100 shrink-0">
@@ -141,7 +141,7 @@ const ReviewDetail = () => {
         <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 space-y-6 sm:space-y-8 custom-scrollbar relative shadow-[inset_0_-15px_15px_-15px_rgba(0,0,0,0.05)]">
           
           {/* Scores */}
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-row gap-4">
             <div className="flex-1 bg-neutral-50 rounded-2xl p-4 sm:p-5 border border-neutral-100 flex flex-col justify-center items-center">
               <span className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Match Score</span>
               <span className="text-4xl font-black text-black">{matchScore}<span className="text-xl text-neutral-400">/100</span></span>
@@ -294,7 +294,7 @@ const ReviewDetail = () => {
       </div>
 
       {/* RIGHT PANEL: Live PDF Viewer */}
-      <div className="w-full lg:w-1/2 h-1/2 lg:h-full bg-neutral-100 flex flex-col relative">
+      <div className="w-full lg:w-1/2 min-h-[500px] lg:h-full bg-neutral-100 flex flex-col relative shrink-0 pb-12 lg:pb-0">
         <div className="absolute top-4 left-4 z-10">
           <span className="bg-black/90 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-2">
             <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div> Live Preview
