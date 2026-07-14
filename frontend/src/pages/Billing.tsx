@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
-import { CreditCard, CheckCircle2, Zap, AlertCircle, Check, Sparkles, ArrowRight, Shield } from 'lucide-react';
-import { useLocation, Link } from 'react-router-dom';
+import { CreditCard, CheckCircle2, AlertCircle, Check, Sparkles, ArrowRight, Shield } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 interface SubscriptionStatus {
   tier: string;

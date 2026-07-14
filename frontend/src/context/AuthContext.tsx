@@ -1,8 +1,7 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import api from '../services/api';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 
 interface User {
-  id: int;
+  id: number;
   email: string;
   full_name: string | null;
   is_active: boolean;
