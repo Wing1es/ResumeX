@@ -138,15 +138,15 @@ const ReviewDetail = () => {
         </div>
 
         {/* Scrollable Analysis Content */}
-        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-8 custom-scrollbar relative shadow-[inset_0_-15px_15px_-15px_rgba(0,0,0,0.05)]">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 space-y-6 sm:space-y-8 custom-scrollbar relative shadow-[inset_0_-15px_15px_-15px_rgba(0,0,0,0.05)]">
           
           {/* Scores */}
-          <div className="flex gap-4">
-            <div className="flex-1 bg-neutral-50 rounded-2xl p-5 border border-neutral-100 flex flex-col justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1 bg-neutral-50 rounded-2xl p-4 sm:p-5 border border-neutral-100 flex flex-col justify-center items-center">
               <span className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Match Score</span>
               <span className="text-4xl font-black text-black">{matchScore}<span className="text-xl text-neutral-400">/100</span></span>
             </div>
-            <div className="flex-1 bg-neutral-50 rounded-2xl p-5 border border-neutral-100 flex flex-col justify-center items-center">
+            <div className="flex-1 bg-neutral-50 rounded-2xl p-4 sm:p-5 border border-neutral-100 flex flex-col justify-center items-center">
               <span className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">ATS Score</span>
               <span className="text-4xl font-black text-black">{atsScore}<span className="text-xl text-neutral-400">/100</span></span>
             </div>
@@ -330,37 +330,56 @@ const ReviewDetail = () => {
                   <p className="text-sm font-medium text-neutral-500">Rendering PDF...</p>
                 </div>
               }
-              className="drop-shadow-lg"
+              className="drop-shadow-lg flex flex-col w-full"
             >
-              <Page 
-                pageNumber={pageNumber} 
-                width={pdfWidth > 0 ? pdfWidth : undefined}
-                renderTextLayer={true}
-                renderAnnotationLayer={true}
-                className="bg-white"
-              />
-            </Document>
-            
-            {/* Pagination Controls */}
-            {numPages && numPages > 1 && (
-              <div className="flex items-center gap-4 mt-6 mb-4 bg-white px-4 py-2 rounded-full shadow-sm border border-neutral-200">
-                <button 
-                  onClick={() => setPageNumber(p => Math.max(1, p - 1))}
-                  disabled={pageNumber <= 1}
-                  className="p-1 rounded-full hover:bg-neutral-100 disabled:opacity-50"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-                <span className="text-xs font-semibold">Page {pageNumber} of {numPages}</span>
-                <button 
-                  onClick={() => setPageNumber(p => Math.min(numPages, p + 1))}
-                  disabled={pageNumber >= numPages}
-                  className="p-1 rounded-full hover:bg-neutral-100 disabled:opacity-50"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </button>
+              {/* Desktop: Continuous Scroll */}
+              <div className="hidden lg:flex flex-col gap-6 w-full items-center">
+                {Array.from(new Array(numPages || 1), (el, index) => (
+                  <Page 
+                    key={`page_desktop_${index + 1}`}
+                    pageNumber={index + 1} 
+                    width={pdfWidth > 0 ? pdfWidth : undefined}
+                    renderTextLayer={true}
+                    renderAnnotationLayer={true}
+                    className="bg-white shadow-md mx-auto"
+                  />
+                ))}
               </div>
-            )}
+
+              {/* Mobile: Pagination */}
+              <div className="flex lg:hidden flex-col items-center w-full">
+                <Page 
+                  key={`page_mobile_${pageNumber}`}
+                  pageNumber={pageNumber} 
+                  width={pdfWidth > 0 ? pdfWidth : undefined}
+                  renderTextLayer={true}
+                  renderAnnotationLayer={true}
+                  className="bg-white shadow-md mx-auto"
+                />
+                
+                {numPages && numPages > 1 && (
+                  <div className="flex items-center justify-center gap-4 mt-6 mb-2 bg-white px-5 py-2.5 rounded-full shadow-sm border border-neutral-200 w-fit self-center">
+                    <button 
+                      onClick={() => setPageNumber(p => Math.max(1, p - 1))}
+                      disabled={pageNumber <= 1}
+                      className="p-1.5 rounded-full hover:bg-neutral-100 disabled:opacity-50 transition-colors"
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </button>
+                    <span className="text-sm font-bold tracking-widest text-neutral-600">
+                      PAGE {pageNumber} OF {numPages}
+                    </span>
+                    <button 
+                      onClick={() => setPageNumber(p => Math.min(numPages, p + 1))}
+                      disabled={pageNumber >= numPages}
+                      className="p-1.5 rounded-full hover:bg-neutral-100 disabled:opacity-50 transition-colors"
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </Document>
             
             {/* Mobile Download Fallback */}
             <a 

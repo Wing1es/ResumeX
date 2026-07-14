@@ -12,7 +12,8 @@ const MainLayout = () => {
   const navLink = (to: string, label: string, icon: React.ReactNode) => (
     <Link
       to={to}
-      className={`text-[13px] font-medium px-3.5 py-2 rounded-full transition-all flex items-center gap-1.5 ${
+      title={label}
+      className={`text-[13px] font-medium px-2 sm:px-3.5 py-2 rounded-full transition-all flex items-center gap-1.5 ${
         isActive(to)
           ? 'bg-black text-white shadow-sm'
           : isHome
@@ -21,7 +22,7 @@ const MainLayout = () => {
       }`}
     >
       {icon}
-      {label}
+      <span className="hidden sm:inline">{label}</span>
     </Link>
   );
 
@@ -52,12 +53,13 @@ const MainLayout = () => {
                 <div className={`w-px h-5 mx-2 ${isHome ? 'bg-white/20' : 'bg-neutral-200'}`} />
                 <button
                   onClick={logout}
-                  className={`text-[13px] font-medium px-3.5 py-2 rounded-full transition-colors flex items-center gap-1.5 ${
+                  title="Logout"
+                  className={`text-[13px] font-medium px-2 sm:px-3.5 py-2 rounded-full transition-colors flex items-center gap-1.5 ${
                     isHome ? 'text-neutral-400 hover:text-red-400' : 'text-neutral-400 hover:text-red-500'
                   }`}
                 >
                   <LogOut className="h-3.5 w-3.5" />
-                  Logout
+                  <span className="hidden sm:inline">Logout</span>
                 </button>
               </>
             ) : (

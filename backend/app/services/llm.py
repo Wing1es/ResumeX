@@ -232,8 +232,9 @@ def chat_with_resume(current_resume_json: str, job_description: str, user_messag
     
     Guidelines:
     1. For `sections`, if you include a section (e.g. "EXPERIENCE"), you MUST provide all of its items. The system will completely replace the old "EXPERIENCE" section with your new one.
-    2. Do not include untouched sections in the `updates.sections` array.
-    3. If the user asks to move or reorder sections, provide a `section_order` array listing the section titles in the new order.
+    2. To DELETE an entire section, include it in the `updates.sections` array but leave the `items` array completely empty: `[]`. The system will recognize this and delete the section.
+    3. Do not include untouched sections in the `updates.sections` array.
+    4. If the user asks to move or reorder sections, provide a `section_order` array listing the section titles in the new order.
     
     Return ONLY valid JSON. Do not include markdown code blocks.
     """

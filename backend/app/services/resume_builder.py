@@ -45,12 +45,20 @@ def apply_partial_updates(current_data: dict, updates: dict) -> dict:
         
         for updated_sec in updates["sections"]:
             title = updated_sec.get("section_title", "").upper()
+            is_empty = not updated_sec.get("items")
+            
             if title in existing_sections:
                 idx = existing_sections[title]
-                current_data["sections"][idx] = updated_sec
+                if is_empty:
+                    current_data["sections"][idx] = None
+                else:
+                    current_data["sections"][idx] = updated_sec
             else:
-                current_data["sections"].append(updated_sec)
-                existing_sections[title] = len(current_data["sections"]) - 1
+                if not is_empty:
+                    current_data["sections"].append(updated_sec)
+                    existing_sections[title] = len(current_data["sections"]) - 1
+                    
+        current_data["sections"] = [s for s in current_data["sections"] if s is not None]
                 
     if "section_order" in updates:
         order_map = {title.upper(): i for i, title in enumerate(updates["section_order"])}
